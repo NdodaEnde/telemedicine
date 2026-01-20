@@ -77,6 +77,7 @@ const Auth = () => {
         nurse: "/clinician",
         doctor: "/clinician",
         admin: "/admin",
+        receptionist: "/admin",
       };
       navigate(roleRoutes[role], { replace: true });
     }

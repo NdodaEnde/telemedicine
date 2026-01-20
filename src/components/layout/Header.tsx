@@ -30,6 +30,7 @@ const Header = () => {
       nurse: "/clinician",
       doctor: "/clinician",
       admin: "/admin",
+      receptionist: "/admin",
     };
     return routes[userRole];
   };

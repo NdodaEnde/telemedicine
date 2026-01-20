@@ -71,6 +71,173 @@ export type Database = {
           },
         ]
       }
+      bookings: {
+        Row: {
+          appointment_id: string | null
+          billing_type: Database["public"]["Enums"]["patient_billing_type"]
+          clinician_id: string
+          conversation_id: string | null
+          created_at: string | null
+          created_by: string
+          duration_minutes: number | null
+          id: string
+          invoice_id: string | null
+          notes: string | null
+          patient_id: string
+          scheduled_at: string
+          service_type: Database["public"]["Enums"]["service_type"]
+          status: Database["public"]["Enums"]["appointment_status"]
+          updated_at: string | null
+        }
+        Insert: {
+          appointment_id?: string | null
+          billing_type?: Database["public"]["Enums"]["patient_billing_type"]
+          clinician_id: string
+          conversation_id?: string | null
+          created_at?: string | null
+          created_by: string
+          duration_minutes?: number | null
+          id?: string
+          invoice_id?: string | null
+          notes?: string | null
+          patient_id: string
+          scheduled_at: string
+          service_type?: Database["public"]["Enums"]["service_type"]
+          status?: Database["public"]["Enums"]["appointment_status"]
+          updated_at?: string | null
+        }
+        Update: {
+          appointment_id?: string | null
+          billing_type?: Database["public"]["Enums"]["patient_billing_type"]
+          clinician_id?: string
+          conversation_id?: string | null
+          created_at?: string | null
+          created_by?: string
+          duration_minutes?: number | null
+          id?: string
+          invoice_id?: string | null
+          notes?: string | null
+          patient_id?: string
+          scheduled_at?: string
+          service_type?: Database["public"]["Enums"]["service_type"]
+          status?: Database["public"]["Enums"]["appointment_status"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "chat_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_conversations: {
+        Row: {
+          booking_id: string | null
+          created_at: string | null
+          id: string
+          last_message: string | null
+          last_message_at: string | null
+          patient_id: string
+          patient_type:
+            | Database["public"]["Enums"]["patient_billing_type"]
+            | null
+          receptionist_id: string | null
+          status: Database["public"]["Enums"]["chat_status"]
+          unread_count: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string | null
+          id?: string
+          last_message?: string | null
+          last_message_at?: string | null
+          patient_id: string
+          patient_type?:
+            | Database["public"]["Enums"]["patient_billing_type"]
+            | null
+          receptionist_id?: string | null
+          status?: Database["public"]["Enums"]["chat_status"]
+          unread_count?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string | null
+          id?: string
+          last_message?: string | null
+          last_message_at?: string | null
+          patient_id?: string
+          patient_type?:
+            | Database["public"]["Enums"]["patient_billing_type"]
+            | null
+          receptionist_id?: string | null
+          status?: Database["public"]["Enums"]["chat_status"]
+          unread_count?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string | null
+          file_name: string | null
+          file_size: number | null
+          file_url: string | null
+          id: string
+          message_type: Database["public"]["Enums"]["message_type_chat"]
+          read_at: string | null
+          sender_id: string
+          sender_role: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          message_type?: Database["public"]["Enums"]["message_type_chat"]
+          read_at?: string | null
+          sender_id: string
+          sender_role: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          message_type?: Database["public"]["Enums"]["message_type_chat"]
+          read_at?: string | null
+          sender_id?: string
+          sender_role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "chat_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clinical_notes: {
         Row: {
           appointment_id: string
@@ -316,6 +483,65 @@ export type Database = {
           },
         ]
       }
+      invoices: {
+        Row: {
+          amount: number
+          booking_id: string
+          clinician_id: string
+          consultation_date: string
+          created_at: string | null
+          id: string
+          paid_at: string | null
+          patient_id: string
+          payment_reference: string | null
+          service_description: string | null
+          service_name: string
+          service_type: Database["public"]["Enums"]["service_type"]
+          status: Database["public"]["Enums"]["invoice_status"]
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          clinician_id: string
+          consultation_date: string
+          created_at?: string | null
+          id?: string
+          paid_at?: string | null
+          patient_id: string
+          payment_reference?: string | null
+          service_description?: string | null
+          service_name: string
+          service_type: Database["public"]["Enums"]["service_type"]
+          status?: Database["public"]["Enums"]["invoice_status"]
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          clinician_id?: string
+          consultation_date?: string
+          created_at?: string | null
+          id?: string
+          paid_at?: string | null
+          patient_id?: string
+          payment_reference?: string | null
+          service_description?: string | null
+          service_name?: string
+          service_type?: Database["public"]["Enums"]["service_type"]
+          status?: Database["public"]["Enums"]["invoice_status"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prescriptions: {
         Row: {
           appointment_id: string | null
@@ -536,7 +762,34 @@ export type Database = {
         | "in_progress"
         | "cancelled"
         | "completed"
+      chat_status:
+        | "new"
+        | "active"
+        | "booking_pending"
+        | "booked"
+        | "consultation_complete"
+        | "closed"
       consultation_type: "video" | "phone" | "in_person"
+      invoice_status: "pending" | "paid" | "cancelled"
+      message_type_chat:
+        | "text"
+        | "image"
+        | "file"
+        | "system"
+        | "booking_confirmation"
+      patient_billing_type:
+        | "medical_aid"
+        | "campus_africa"
+        | "university_student"
+        | "cash"
+      service_type:
+        | "teleconsultation"
+        | "follow_up_0_3"
+        | "follow_up_4_7"
+        | "script_1_month"
+        | "script_3_months"
+        | "script_6_months"
+        | "medical_forms"
       symptom_severity: "mild" | "moderate" | "severe"
     }
     CompositeTypes: {
@@ -673,7 +926,38 @@ export const Constants = {
         "cancelled",
         "completed",
       ],
+      chat_status: [
+        "new",
+        "active",
+        "booking_pending",
+        "booked",
+        "consultation_complete",
+        "closed",
+      ],
       consultation_type: ["video", "phone", "in_person"],
+      invoice_status: ["pending", "paid", "cancelled"],
+      message_type_chat: [
+        "text",
+        "image",
+        "file",
+        "system",
+        "booking_confirmation",
+      ],
+      patient_billing_type: [
+        "medical_aid",
+        "campus_africa",
+        "university_student",
+        "cash",
+      ],
+      service_type: [
+        "teleconsultation",
+        "follow_up_0_3",
+        "follow_up_4_7",
+        "script_1_month",
+        "script_3_months",
+        "script_6_months",
+        "medical_forms",
+      ],
       symptom_severity: ["mild", "moderate", "severe"],
     },
   },

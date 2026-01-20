@@ -200,6 +200,7 @@ export type Database = {
           message_type: Database["public"]["Enums"]["message_type_chat"]
           read_at: string | null
           sender_id: string
+          sender_name: string | null
           sender_role: string
         }
         Insert: {
@@ -213,6 +214,7 @@ export type Database = {
           message_type?: Database["public"]["Enums"]["message_type_chat"]
           read_at?: string | null
           sender_id: string
+          sender_name?: string | null
           sender_role: string
         }
         Update: {
@@ -226,6 +228,7 @@ export type Database = {
           message_type?: Database["public"]["Enums"]["message_type_chat"]
           read_at?: string | null
           sender_id?: string
+          sender_name?: string | null
           sender_role?: string
         }
         Relationships: [

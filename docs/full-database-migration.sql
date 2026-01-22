@@ -943,5 +943,81 @@ CREATE INDEX idx_clinician_availability_day_of_week ON public.clinician_availabi
 CREATE INDEX idx_user_roles_user_id ON public.user_roles(user_id);
 
 -- =====================================================
+-- PART 24: SEED TEST CLINICIAN ACCOUNTS
+-- =====================================================
+-- 
+-- NOTE: This section creates test clinician accounts for development/testing.
+-- These users are created via the Supabase Admin API (service role required).
+-- 
+-- To seed these accounts, you have two options:
+--
+-- OPTION 1: Use the Edge Function (Recommended for Lovable Cloud)
+-- Deploy and call the seed-test-users edge function.
+--
+-- OPTION 2: Manual Creation via Supabase Dashboard
+-- 1. Go to Authentication > Users in your Supabase dashboard
+-- 2. Click "Add User" and create each user with the details below
+-- 3. After creating auth users, run the SQL below to set up their profiles
+--
+-- TEST ACCOUNTS:
+-- ┌─────────────────┬──────────────┬─────────────────────┬────────┬───────────────┐
+-- │ Email           │ Password     │ Name                │ Role   │ HPCSA Number  │
+-- ├─────────────────┼──────────────┼─────────────────────┼────────┼───────────────┤
+-- │ ca1@hcf.test    │ password123  │ Sr. Thandiwe Nkosi  │ nurse  │ NU0012345     │
+-- │ ca2@hcf.test    │ password123  │ Sr. Sipho Mokoena   │ nurse  │ NU0012346     │
+-- │ dr1@hcf.test    │ password123  │ Dr. Nomsa Dlamini   │ doctor │ MP0098765     │
+-- └─────────────────┴──────────────┴─────────────────────┴────────┴───────────────┘
+--
+-- After auth users are created (either via edge function or dashboard), 
+-- the handle_new_user() trigger automatically creates:
+--   - profiles entry with first_name and last_name
+--   - user_roles entry with the appropriate role
+--   - clinician_profiles entry (if role is nurse or doctor)
+--
+-- If you need to manually update HPCSA numbers after user creation, run:
+
+-- UPDATE public.clinician_profiles 
+-- SET hpcsa_number = 'NU0012345' 
+-- WHERE id = (SELECT id FROM auth.users WHERE email = 'ca1@hcf.test');
+
+-- UPDATE public.clinician_profiles 
+-- SET hpcsa_number = 'NU0012346' 
+-- WHERE id = (SELECT id FROM auth.users WHERE email = 'ca2@hcf.test');
+
+-- UPDATE public.clinician_profiles 
+-- SET hpcsa_number = 'MP0098765' 
+-- WHERE id = (SELECT id FROM auth.users WHERE email = 'dr1@hcf.test');
+
+-- =====================================================
+-- SEED FUNCTION FOR AUTOMATED TESTING (Optional)
+-- =====================================================
+-- This function can be called to verify test accounts exist
+-- and return their status. Useful for CI/CD pipelines.
+
+CREATE OR REPLACE FUNCTION public.get_test_clinician_status()
+RETURNS TABLE (
+    email text,
+    user_exists boolean,
+    has_profile boolean,
+    has_role boolean,
+    has_clinician_profile boolean
+) 
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        test_email::text,
+        EXISTS(SELECT 1 FROM auth.users u WHERE u.email = test_email) as user_exists,
+        EXISTS(SELECT 1 FROM auth.users u JOIN public.profiles p ON p.id = u.id WHERE u.email = test_email) as has_profile,
+        EXISTS(SELECT 1 FROM auth.users u JOIN public.user_roles r ON r.user_id = u.id WHERE u.email = test_email) as has_role,
+        EXISTS(SELECT 1 FROM auth.users u JOIN public.clinician_profiles cp ON cp.id = u.id WHERE u.email = test_email) as has_clinician_profile
+    FROM unnest(ARRAY['ca1@hcf.test', 'ca2@hcf.test', 'dr1@hcf.test']) AS test_email;
+END;
+$$;
+
+-- =====================================================
 -- END OF MIGRATION SCRIPT
 -- =====================================================
